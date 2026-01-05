@@ -206,6 +206,17 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
     color: ${options.textColor};
   `;
 
+  const creditStyle = css`
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 11px;
+    color: ${options.textColor};
+    opacity: 0.4;
+    font-family: sans-serif;
+    pointer-events: none;
+  `;
+
   const renderMetric = (field: Field, isClickable: boolean = false) => {
     const value = getValue(field);
     const emoji = getEmoji(value);
@@ -324,6 +335,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
     return (
       <div className={containerStyle}>
         <div style={{ color: options.textColor }}>No numeric data available</div>
+        <div className={creditStyle}>Mehmet Ömer Ekinci</div>
       </div>
     );
   }
@@ -332,48 +344,55 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
     return (
       <div className={containerStyle}>
         {renderMetric(fields[0], true)}
+        <div className={creditStyle}>Mehmet Ömer Ekinci</div>
       </div>
     );
   }
 
   if (options.displayMode === 'grid') {
     return (
-      <div className={gridStyle}>
-        {fields.map((field, idx) => (
-          <div key={idx} className={metricCardStyle}>
-            {renderMetric(field, true)}
-          </div>
-        ))}
+      <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+        <div className={gridStyle}>
+          {fields.map((field, idx) => (
+            <div key={idx} className={metricCardStyle}>
+              {renderMetric(field, true)}
+            </div>
+          ))}
+        </div>
+        <div className={creditStyle}>Mehmet Ömer Ekinci</div>
       </div>
     );
   }
 
   return (
-    <div className={listStyle}>
-      {fields.map((field, idx) => {
-        const value = getValue(field);
-        const emoji = getEmoji(value);
-        const level = getEmojiLevel(value);
-        
-        return (
-          <div key={idx} className={metricRowStyle}>
-            <div style={{ fontSize: options.emojiSize * 0.5 }}>{emoji}</div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: options.fontSize * 0.8, color: options.textColor, fontWeight: 'bold' }}>
-                {field.name}
+    <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+      <div className={listStyle}>
+        {fields.map((field, idx) => {
+          const value = getValue(field);
+          const emoji = getEmoji(value);
+          const level = getEmojiLevel(value);
+          
+          return (
+            <div key={idx} className={metricRowStyle}>
+              <div style={{ fontSize: options.emojiSize * 0.5 }}>{emoji}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: options.fontSize * 0.8, color: options.textColor, fontWeight: 'bold' }}>
+                  {field.name}
+                </div>
+                <div style={{ fontSize: options.fontSize * 0.6, color: options.textColor, opacity: 0.7 }}>
+                  {value !== null ? value.toFixed(options.decimals) : 'N/A'}
+                </div>
               </div>
-              <div style={{ fontSize: options.fontSize * 0.6, color: options.textColor, opacity: 0.7 }}>
-                {value !== null ? value.toFixed(options.decimals) : 'N/A'}
-              </div>
+              {options.showTrend && (
+                <div style={{ fontSize: options.fontSize * 0.6, color: options.textColor }}>
+                  {getTrendEmoji(getTrend(field), options.higherIsBetter)}
+                </div>
+              )}
             </div>
-            {options.showTrend && (
-              <div style={{ fontSize: options.fontSize * 0.6, color: options.textColor }}>
-                {getTrendEmoji(getTrend(field), options.higherIsBetter)}
-              </div>
-            )}
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
+      <div className={creditStyle}>Mehmet Ömer Ekinci</div>
     </div>
   );
 };
